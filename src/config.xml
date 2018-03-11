@@ -4,9 +4,21 @@
   <!--
   Override the EPG server location if you are in a different
   network, or when you need to use a direct IP address.
+  For solocoo servers, the protocol and api base path must be included.
   -->
-  <!-- <server>w1.zt6.nl</server> -->
+  <!--<server></server>-->
   
+  <!--
+  Specify the type of API from which the EPG should be grabbed.
+  Old behaviour is still default, but Solocoo is supported as well.
+  -->
+  <!--<api>solocoo</api>-->
+  
+  <!--
+  The Solocoo API will need your Amino's MAC address to log in. 
+  -->
+  <!--<mac>00:11:22:33:44:55</mac>-->
+
   <!--
   By default the grabber will grab 7 days, which is the usual
   maximum of days that are offered.
@@ -21,8 +33,9 @@
   This retrieval is a lot faster.
   NOTE: If you change this value, delete the database file. If you
   don't, only newly grabbed programs will be affected.
+  Has no effect on solocoo backends as all data is included anyway.
   -->
-  <!-- <grabdetails>TRUE</grabdetails> -->
+  <grabdetails>TRUE</grabdetails>
   
   <!--
   By default logo's for TV channels are not downloaded.
@@ -35,15 +48,16 @@
   
   Once a logo is downloaded, it will NOT be refreshed. To refresh the logo, delete the
   existing local copy.
+  TODO: make this work on solocoo servers
   -->
-  <!-- <downloadlogo>FALSE</downloadlogo> -->
+  <downloadlogo>FALSE</downloadlogo>
   
   <!--
   You can specify different filenames and locations for the
   generated EPG file and the database, if so desired.
   -->
   <!-- <xmltvfile>aminoepg.xml</xmltvfile> -->
-  <!-- <databasefile>aminograbber.pkl</databasefile> -->
+  <databasefile>aminograbber.pkl</databasefile>
 
   <!--
   A list of all the channels that you would like the EPG grabber to download for you.
@@ -58,6 +72,7 @@
   <channellist>
   
     <!-- TV channels -->
+	<!--
     <channel id="ned1">Nederland 1</channel>
     <channel id="ned2">Nederland 2</channel>
     <channel id="ned3">Nederland 3</channel>
@@ -228,7 +243,8 @@
     
     <channel id="lontv">LON TV</channel>
     <channel id="ustadtv">Ustad</channel>
-    
+    -->
+
     <!-- Obsolete TV channels that are not broadcasted anymore -->
     <!-- <channel id="discoveryhd">Discovery HD Showcase</channel> -->
     <!-- <channel id="tmfnl">TMF NL</channel> -->
@@ -283,5 +299,348 @@
     <!-- Obsolete radio channels that are not broadcasted anymore -->
     <!-- <channel id="kinkfm">Kink FM</channel> -->
     
+
+	<!-- Solocoo channel list
+    <channel id="NPO 1">NPO 1</channel>
+    <channel id="NPO 2">NPO 2</channel>
+    <channel id="NPO 3">NPO 3</channel>
+    <channel id="RTL 4">RTL 4</channel>
+    <channel id="RTL 5">RTL 5</channel>
+    <channel id="SBS 6">SBS 6</channel>
+    <channel id="RTL 7">RTL 7</channel>
+    <channel id="Veronica">Veronica</channel>
+    <channel id="NET 5">NET 5</channel>
+    <channel id="RTL 8">RTL 8</channel>
+    <channel id="Fox">Fox</channel>
+    <channel id="RTL Z">RTL Z</channel>
+    <channel id="Comedy Central">Comedy Central</channel>
+    <channel id="Nickelodeon / Spike">Nickelodeon / Spike</channel>
+    <channel id="MTV">MTV</channel>
+    <channel id="Cartoon Network">Cartoon Network</channel>
+    <channel id="Discovery Channel">Discovery Channel</channel>
+    <channel id="Investigation Discovery">Investigation Discovery</channel>
+    <channel id="National Geographic Channel">National Geographic Channel</channel>
+    <channel id="Animal Planet">Animal Planet</channel>
+    <channel id="TLC">TLC</channel>
+    <channel id="ONS">ONS</channel>
+    <channel id="24 Kitchen">24 Kitchen</channel>
+    <channel id="Comedy Central Family">Comedy Central Family</channel>
+    <channel id="SBS 9">SBS 9</channel>
+    <channel id="RTL Crime">RTL Crime</channel>
+    <channel id="NPO 101">NPO 101</channel>
+    <channel id="RTL Lounge">RTL Lounge</channel>
+    <channel id="E! Entertainment">E! Entertainment</channel>
+    <channel id="NPO Best">NPO Best</channel>
+    <channel id="Family 7">Family 7</channel>
+    <channel id="BBC Entertainment">BBC Entertainment</channel>
+    <channel id="AT5">AT5</channel>
+    <channel id="Omroep West">Omroep West</channel>
+    <channel id="RTV Rijnmond">RTV Rijnmond</channel>
+    <channel id="RTV Noord">RTV Noord</channel>
+    <channel id="Omroep Brabant">Omroep Brabant</channel>
+    <channel id="Omroep Gelderland">Omroep Gelderland</channel>
+    <channel id="RTV Utrecht">RTV Utrecht</channel>
+    <channel id="RTV Oost">RTV Oost</channel>
+    <channel id="L1 TV">L1 TV</channel>
+    <channel id="Omrop Fryslân">Omrop Fryslân</channel>
+    <channel id="TV Noord-Holland">TV Noord-Holland</channel>
+    <channel id="RTV Drenthe">RTV Drenthe</channel>
+    <channel id="Omroep Flevoland">Omroep Flevoland</channel>
+    <channel id="Omroep Zeeland">Omroep Zeeland</channel>
+    <channel id="TV Enschede">TV Enschede</channel>
+    <channel id="RTV Noordoost Twente">RTV Noordoost Twente</channel>
+    <channel id="Omroep LEO TV">Omroep LEO TV</channel>
+    <channel id="GPTV Friesland">GPTV Friesland</channel>
+    <channel id="RTV Deventer">RTV Deventer</channel>
+    <channel id="RTV Arnhem">RTV Arnhem</channel>
+    <channel id="StreekTV">StreekTV</channel>
+    <channel id="Dtv Oss – Bernheze">Dtv Oss – Bernheze</channel>
+    <channel id="Landerd-TV">Landerd-TV</channel>
+    <channel id="één">één</channel>
+    <channel id="Canvas">Canvas</channel>
+    <channel id="Ketnet">Ketnet</channel>
+    <channel id="ARD">ARD</channel>
+    <channel id="ZDF">ZDF</channel>
+    <channel id="NDR Fernsehen">NDR Fernsehen</channel>
+    <channel id="WDR">WDR</channel>
+    <channel id="RTL Television">RTL Television</channel>
+    <channel id="Sat.1">Sat.1</channel>
+    <channel id="ProSieben">ProSieben</channel>
+    <channel id="VOX">VOX</channel>
+    <channel id="RTL2">RTL2</channel>
+    <channel id="BBC One">BBC One</channel>
+    <channel id="BBC Two">BBC Two</channel>
+    <channel id="BBC Four">BBC Four</channel>
+    <channel id="CBeebies">CBeebies</channel>
+    <channel id="Arte">Arte</channel>
+    <channel id="2M Monde">2M Monde</channel>
+    <channel id="Al Jazeera (Arabic)">Al Jazeera (Arabic)</channel>
+    <channel id="Antena 3">Antena 3</channel>
+    <channel id="TVE">TVE</channel>
+    <channel id="TRT Türk">TRT Türk</channel>
+    <channel id="CNN Turk">CNN Turk</channel>
+    <channel id="Discovery Science">Discovery Science</channel>
+    <channel id="Discovery World">Discovery World</channel>
+    <channel id="Nat Geo Wild">Nat Geo Wild</channel>
+    <channel id="History Channel">History Channel</channel>
+    <channel id="Travel Channel">Travel Channel</channel>
+    <channel id="Fashion TV HD">Fashion TV HD</channel>
+    <channel id="Horse and Country TV">Horse and Country TV</channel>
+    <channel id="outTV">outTV</channel>
+    <channel id="NPO Cultura">NPO Cultura</channel>
+    <channel id="NPO Nieuws">NPO Nieuws</channel>
+    <channel id="NPO Politiek">NPO Politiek</channel>
+    <channel id="CNN International">CNN International</channel>
+    <channel id="BBC World News">BBC World News</channel>
+    <channel id="Al Jazeera (English)">Al Jazeera (English)</channel>
+    <channel id="Euronews">Euronews</channel>
+    <channel id="NPO 1 GOS">NPO 1 GOS</channel>
+    <channel id="NPO 2 GOS">NPO 2 GOS</channel>
+    <channel id="NPO 3 GOS">NPO 3 GOS</channel>
+    <channel id="Nick Toons">Nick Toons</channel>
+    <channel id="Nick Jr">Nick Jr</channel>
+    <channel id="Pebble TV">Pebble TV</channel>
+    <channel id="Boomerang">Boomerang</channel>
+    <channel id="Baby TV">Baby TV</channel>
+    <channel id="NPO Zappelin">NPO Zappelin</channel>
+    <channel id="Comedy Central Extra">Comedy Central Extra</channel>
+    <channel id="RTL Telekids">RTL Telekids</channel>
+    <channel id="XITE">XITE</channel>
+    <channel id="MTV Brand New">MTV Brand New</channel>
+    <channel id="MTV Music 24">MTV Music 24</channel>
+    <channel id="SLAM!TV">SLAM!TV</channel>
+    <channel id="LiteTV">LiteTV</channel>
+    <channel id="VH1">VH1</channel>
+    <channel id="192TV">192TV</channel>
+    <channel id="TV Oranje">TV Oranje</channel>
+    <channel id="DJAZZ.tv">DJAZZ.tv</channel>
+    <channel id="Brava HDTV">Brava HDTV</channel>
+    <channel id="SchlagerTV">SchlagerTV</channel>
+    <channel id="Mezzo">Mezzo</channel>
+    <channel id="AMC">AMC</channel>
+    <channel id="Film1 Premiere">Film1 Premiere</channel>
+    <channel id="Film1 Action">Film1 Action</channel>
+    <channel id="Film1 Family">Film1 Family</channel>
+    <channel id="Film1 Drama">Film1 Drama</channel>
+    <channel id="Eurosport">Eurosport</channel>
+    <channel id="Eurosport 2">Eurosport 2</channel>
+    <channel id="Motors TV">Motors TV</channel>
+    <channel id="FOX Sports 1 Eredivisie">FOX Sports 1 Eredivisie</channel>
+    <channel id="FOX Sports 2 International">FOX Sports 2 International</channel>
+    <channel id="FOX Sports 3 Eredivisie">FOX Sports 3 Eredivisie</channel>
+    <channel id="FOX Sports 4 International">FOX Sports 4 International</channel>
+    <channel id="FOX Sports 5 Eredivisie">FOX Sports 5 Eredivisie</channel>
+    <channel id="FOX Sports 6 International">FOX Sports 6 International</channel>
+    <channel id="Ziggo Sport Select">Ziggo Sport Select</channel>
+    <channel id="Ziggo Sport Voetbal">Ziggo Sport Voetbal</channel>
+    <channel id="Ziggo Sport Golf">Ziggo Sport Golf</channel>
+    <channel id="Ziggo Sport Racing">Ziggo Sport Racing</channel>
+    <channel id="Ziggo Sport Extra 1">Ziggo Sport Extra 1</channel>
+    <channel id="Ziggo Sport Extra 2">Ziggo Sport Extra 2</channel>
+    <channel id="Meiden van Holland Hard">Meiden van Holland Hard</channel>
+    <channel id="Playboy TV">Playboy TV</channel>
+    <channel id="PassieXXX">PassieXXX</channel>
+    <channel id="Dusk!">Dusk!</channel>
+    <channel id="Radio 1">Radio 1</channel>
+    <channel id="Radio 2">Radio 2</channel>
+    <channel id="3FM">3FM</channel>
+    <channel id="Radio 4">Radio 4</channel>
+    <channel id="Radio 5">Radio 5</channel>
+    <channel id="Radio 6">Radio 6</channel>
+    <channel id="Radio 538">Radio 538</channel>
+    <channel id="Sky Radio 101 FM">Sky Radio 101 FM</channel>
+    <channel id="Q-Music">Q-Music</channel>
+    <channel id="Radio Veronica">Radio Veronica</channel>
+    <channel id="100NL">100NL</channel>
+    <channel id="ClassicFM">ClassicFM</channel>
+    <channel id="Radio 10 Gold">Radio 10 Gold</channel>
+    <channel id="SLAM!FM">SLAM!FM</channel>
+    <channel id="Arrow Classic Rock">Arrow Classic Rock</channel>
+    <channel id="BNR Nieuwsradio">BNR Nieuwsradio</channel>
+    <channel id="Radio Continu">Radio Continu</channel>
+    <channel id="FunX">FunX</channel>
+    <channel id="Efteling Radio">Efteling Radio</channel>
+    <channel id="DECIBEL">DECIBEL</channel>
+    <channel id="Concertzender">Concertzender</channel>
+    <channel id="Radio West">Radio West</channel>
+    <channel id="Radio Rijnmond">Radio Rijnmond</channel>
+    <channel id="Radio Noord-Holland">Radio Noord-Holland</channel>
+    <channel id="Radio Omroep Brabant">Radio Omroep Brabant</channel>
+    <channel id="Radio Gelderland">Radio Gelderland</channel>
+    <channel id="Radio M Utrecht">Radio M Utrecht</channel>
+    <channel id="Radio Oost">Radio Oost</channel>
+    <channel id="L1 Radio">L1 Radio</channel>
+    <channel id="Omrop Fryslân Radio">Omrop Fryslân Radio</channel>
+    <channel id="Radio Noord">Radio Noord</channel>
+    <channel id="Radio Drenthe">Radio Drenthe</channel>
+    <channel id="Radio Flevoland">Radio Flevoland</channel>
+    <channel id="Omroep Zeeland Radio">Omroep Zeeland Radio</channel>
+    <channel id="Radio TV Enschede FM">Radio TV Enschede FM</channel>
+    <channel id="RTV Twente FM">RTV Twente FM</channel>
+    <channel id="Omroep LEO TV Radio">Omroep LEO TV Radio</channel>
+    <channel id="RTV Deventer Radio">RTV Deventer Radio</channel>
+    <channel id="Radio RTV Sternet">Radio RTV Sternet</channel>
+    <channel id="VRT Klara">VRT Klara</channel>
+    <channel id="VRT Radio 1">VRT Radio 1</channel>
+    <channel id="VRT Radio 2">VRT Radio 2</channel>
+    <channel id="BBC Radio 1">BBC Radio 1</channel>
+    <channel id="BBC Radio 2">BBC Radio 2</channel>
+    <channel id="BBC Radio 3">BBC Radio 3</channel>
+    <channel id="BBC Radio 4">BBC Radio 4</channel>
+    <channel id="BBC World Service">BBC World Service</channel>
+    <channel id="Stingray Indie Classics">Stingray Indie Classics</channel>
+    <channel id="Stingray Arabic">Stingray Arabic</channel>
+    <channel id="Stingray Blues">Stingray Blues</channel>
+    <channel id="Stingray Chill out">Stingray Chill out</channel>
+    <channel id="Stingray Xmas Carnaval Summer">Stingray Xmas Carnaval Summer</channel>
+    <channel id="Stingray Classic Jazz">Stingray Classic Jazz</channel>
+    <channel id="Stingray Classic Rock">Stingray Classic Rock</channel>
+    <channel id="Stingray Classical">Stingray Classical</channel>
+    <channel id="Stingray Comedy">Stingray Comedy</channel>
+    <channel id="Stingray Country">Stingray Country</channel>
+    <channel id="Stingray Cocktail Lounge">Stingray Cocktail Lounge</channel>
+    <channel id="Stingray Dancefloor Fillers">Stingray Dancefloor Fillers</channel>
+    <channel id="Stingray Dance Classics">Stingray Dance Classics</channel>
+    <channel id="Stingray Lite Easy Listening">Stingray Lite Easy Listening</channel>
+    <channel id="Stingray Espana">Stingray Espana</channel>
+    <channel id="Stingray Filmmuziek">Stingray Filmmuziek</channel>
+    <channel id="Stingray France">Stingray France</channel>
+    <channel id="Stingray Hard Rock">Stingray Hard Rock</channel>
+    <channel id="Stingray Hip Hop">Stingray Hip Hop</channel>
+    <channel id="Stingray Hits">Stingray Hits</channel>
+    <channel id="Stingray Italia">Stingray Italia</channel>
+    <channel id="Stingray Drive">Stingray Drive</channel>
+    <channel id="Stingray Jazz">Stingray Jazz</channel>
+    <channel id="Stingray Kiddo FM">Stingray Kiddo FM</channel>
+    <channel id="Stingray Peuter- en kleuterliedje">Stingray Peuter- en kleuterliedje</channel>
+    <channel id="Stingray Lounge">Stingray Lounge</channel>
+    <channel id="Stingray Love Songs">Stingray Love Songs</channel>
+    <channel id="Stingray Motown">Stingray Motown</channel>
+    <channel id="Stingray Musical">Stingray Musical</channel>
+    <channel id="Stingray Nederpop">Stingray Nederpop</channel>
+    <channel id="Stingray Nederpop gold">Stingray Nederpop gold</channel>
+    <channel id="Stingray The Spa">Stingray The Spa</channel>
+    <channel id="Stingray Nederlandse luisterlied">Stingray Nederlandse luisterlied</channel>
+    <channel id="Stingray Nostalgie">Stingray Nostalgie</channel>
+    <channel id="Stingray Oldies">Stingray Oldies</channel>
+    <channel id="Stingray Opera">Stingray Opera</channel>
+    <channel id="Stingray Operette">Stingray Operette</channel>
+    <channel id="Stingray All Day Party NL">Stingray All Day Party NL</channel>
+    <channel id="Stingray Piratenhits">Stingray Piratenhits</channel>
+    <channel id="Stingray Classic RnB & Soul">Stingray Classic RnB & Soul</channel>
+    <channel id="Stingray Reggae">Stingray Reggae</channel>
+    <channel id="Stingray Relipop">Stingray Relipop</channel>
+    <channel id="Stingray Rock Anthems">Stingray Rock Anthems</channel>
+    <channel id="Stingray Rock 'n roll">Stingray Rock 'n roll</channel>
+    <channel id="Stingray Salsa">Stingray Salsa</channel>
+    <channel id="Stingray Schlager">Stingray Schlager</channel>
+    <channel id="Stingray Seasons">Stingray Seasons</channel>
+    <channel id="Stingray Skihut">Stingray Skihut</channel>
+    <channel id="Stingray Today's pop">Stingray Today's pop</channel>
+    <channel id="Stingray Hard House en Trance">Stingray Hard House en Trance</channel>
+    <channel id="Stingray Turk">Stingray Turk</channel>
+	-->
   </channellist>
+
+  <genres>
+    <genre id="1">Non-fictie / Informatie</genre>
+    <genre id="2">Nieuws</genre>
+    <genre id="3">Dagelijks Nieuws</genre>
+    <genre id="5">Speciaal Verslag</genre>
+    <genre id="12">Cultureel</genre>
+    <genre id="19">Lokaal / Regionaal</genre>
+    <genre id="21">Weersvoorspellingen</genre>
+    <genre id="24">Lopende Zaken</genre>
+    <genre id="25">Consumentenzaken</genre>
+    <genre id="75">Algemene Non-fictie</genre>
+    <genre id="82">Economisch</genre>
+    <genre id="85">Onderwijs</genre>
+    <genre id="105">Kunst</genre>
+    <genre id="106">Muziek</genre>
+    <genre id="110">Cinema</genre>
+    <genre id="117">Geesteswetenschappen</genre>
+    <genre id="120">Geschiedenis</genre>
+    <genre id="121">Cultuur / Traditie / Antropologie / Etnische Studies</genre>
+    <genre id="122">Oorlog / Conflict</genre>
+    <genre id="124">Politieke Wetenschappen</genre>
+    <genre id="125">Wetenschappen</genre>
+    <genre id="127">Natuur / Natuurwetenschappen</genre>
+    <genre id="132">Dieren / Wild</genre>
+    <genre id="135">Exacte Wetenschappen</genre>
+    <genre id="140">Geneeskunde</genre>
+    <genre id="151">Human Interest</genre>
+    <genre id="152">Realiteit</genre>
+    <genre id="154">Biografie / Bekende Personen</genre>
+    <genre id="167">Evenementen</genre>
+    <genre id="179">Sport Evenement</genre>
+    <genre id="183">Media</genre>
+    <genre id="191">Sport</genre>
+    <genre id="199">Fietsen / Fiets</genre>
+    <genre id="203">Baanfietsen</genre>
+    <genre id="204">Teamsporten</genre>
+    <genre id="212">Basketbal</genre>
+    <genre id="216">Voetbal</genre>
+    <genre id="223">Rugby</genre>
+    <genre id="227">Volleybal</genre>
+    <genre id="235">Racketsporten</genre>
+    <genre id="242">Tennis</genre>
+    <genre id="243">Vechtsport</genre>
+    <genre id="252">Watersport</genre>
+    <genre id="267">Wintersport</genre>
+    <genre id="270">IJshockey</genre>
+    <genre id="289">Motorsport</genre>
+    <genre id="290">Autoracen</genre>
+    <genre id="292">Motorfietsen</genre>
+    <genre id="301">Trials</genre>
+    <genre id="302">Social Sport</genre>
+    <genre id="307">Darten</genre>
+    <genre id="322">Paardensport</genre>
+    <genre id="342">Krachtsport</genre>
+    <genre id="344">Boksen</genre>
+    <genre id="360">Golf</genre>
+    <genre id="375">Fictie / Drama</genre>
+    <genre id="376">Algemeen Licht Drama</genre>
+    <genre id="377">Soap</genre>
+    <genre id="381">Romantiek</genre>
+    <genre id="384">Actie</genre>
+    <genre id="385">Avontuur</genre>
+    <genre id="388">Detective / Politie</genre>
+    <genre id="389">Historisch / Episch</genre>
+    <genre id="390">Horror</genre>
+    <genre id="391">Science Fiction</genre>
+    <genre id="392">Oorlog</genre>
+    <genre id="393">Western</genre>
+    <genre id="394">Thriller</genre>
+    <genre id="398">Fantasie / Sprookje</genre>
+    <genre id="399">Erotiek</genre>
+    <genre id="401">Musical</genre>
+    <genre id="402">Klassiek Drama</genre>
+    <genre id="404">Hedendaags Drama</genre>
+    <genre id="409">Amusement / Entertainment</genre>
+    <genre id="410">Quiz / Wedstrijd</genre>
+    <genre id="411">Quiz</genre>
+    <genre id="413">Variatie / Talent</genre>
+    <genre id="417">Reality-tv</genre>
+    <genre id="418">Komedie</genre>
+    <genre id="421">Sitcom</genre>
+    <genre id="424">Humor</genre>
+    <genre id="426">Circus</genre>
+    <genre id="427">Dating</genre>
+    <genre id="431">Muziek</genre>
+    <genre id="432">Klassieke Muziek</genre>
+    <genre id="441">Opera</genre>
+    <genre id="463">Achtergrondmuziek</genre>
+    <genre id="573">Hitlijst / Song Verzoeken</genre>
+    <genre id="575">Muziek Evenement</genre>
+    <genre id="637">Vrije Tijd / Hobby / Lifestyle</genre>
+    <genre id="638">Algemeen Consumentenadvies</genre>
+    <genre id="639">Verkeersveiligheid</genre>
+    <genre id="646">Culinair / Eten / Drinken</genre>
+    <genre id="649">Huis / Interieur / Tuinieren</genre>
+    <genre id="652">Tuinieren</genre>
+    <genre id="654">Hobby's</genre>
+    <genre id="670">Auto's en Motoren</genre>
+    <genre id="680">Reizen / Toerisme</genre>
+    <genre id="684">Volwassenen</genre>
+  </genres>
 </AminoEpgConfig>
