@@ -105,7 +105,7 @@ class fileCache(object):
             if row:
                 # We have the file! Just add a reference
                 self._addRef(reference, expires, row[0])
-                return row[2]
+                return os.path.join(self._store, row[2])
                 
         fname = self._update(reference, expires, url)
         if fname:
