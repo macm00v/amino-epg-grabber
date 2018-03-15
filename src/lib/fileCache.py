@@ -89,9 +89,10 @@ class fileCache(object):
                      "WHERE idx.ref IS ?", [reference])
         row = curs.fetchone()
         if row:
+            # We have a reference, return the full path is the url is unchanged
             curs.close()
             if not url or row[2] == url:
-                return row[1]
+                return os.path.join(self._store, row[1])
         else:
             # No reference exists, check if we have the requested file
             if not url:
