@@ -5,12 +5,12 @@ Created on Mar 14, 2018
 '''
 
 from urllib.error import URLError
+from urllib.parse import urljoin
 import datetime
 import hashlib
 import os
 import sqlite3
 import urllib.request
-from posix import O_RDONLY
 
 class fileCache(object):
     '''
@@ -26,6 +26,8 @@ class fileCache(object):
         '''
         self.director = director
         self.retention = retention
+        self._join = None
+        self._basepath = self.setBasepath(folder)
         self._db = None
         self._dbfile = os.path.join(folder, "fileCache.sqlite")
         self._store = folder
@@ -39,9 +41,10 @@ class fileCache(object):
             os.makedirs(folder)
         
         if os.supports_dir_fd:
-            self._storefd = os.open(folder, O_RDONLY) 
+            self._storefd = os.open(folder, os.O_RDONLY) 
         self._db = sqlite3.connect(self._dbfile)
         self._initDb()
+        self._verifyFiles()
         
     def cleanUp(self):
         '''
@@ -92,7 +95,7 @@ class fileCache(object):
             # We have a reference, return the full path is the url is unchanged
             curs.close()
             if not url or row[2] == url:
-                return os.path.join(self._store, row[1])
+                return self._join(self._basepath, row[1])
         else:
             # No reference exists, check if we have the requested file
             if not url:
@@ -106,13 +109,22 @@ class fileCache(object):
             if row:
                 # We have the file! Just add a reference
                 self._addRef(reference, expires, row[0])
-                return os.path.join(self._store, row[2])
+                return self._join(self._basepath, row[2])
                 
         fname = self._update(reference, expires, url)
         if fname:
-            fname = os.path.join(self._store, fname)
+            fname = self._join(self._basepath, fname)
         return fname
-        
+    
+    
+    def setBasepath(self, basepath):
+        self._basepath = basepath
+        if os.path.isdir(basepath):
+            self._join = os.path.join
+        else:
+            # Assume basepath is a URL
+            self._join = urljoin
+  
     
     ###
     # Private stuff
@@ -176,6 +188,22 @@ class fileCache(object):
         return path
     
     
-    
+    def _verifyFiles(self):
+        curs = self._db.cursor()
+        curs.execute("SELECT path FROM files;")
+        rows = curs.fetchall()
+        for row in rows:
+            file = os.path.join(self._store, row[0])
+            if os.path.isfile(file):
+                if os.path.getsize(file) > 0:
+                    continue
+                else:
+                    os.remove(row[0], dir_fd=self._storefd)
+            curs.execute("DELETE FROM files WHERE path IS ?", [row[0]])
+        self._db.commit()
+        curs.close()
+        
+            
+        
     
     

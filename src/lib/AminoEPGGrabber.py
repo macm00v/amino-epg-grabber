@@ -149,12 +149,15 @@ class AminoEPGGrabber(object):
                 value = downloadcover.text.lower()
                 if value == "true": # False is default, so override to false only
                     self.downloadcover = True
-                    
                     if "location" in downloadcover.attrib:
                         location = downloadcover.attrib["location"].strip()
                         if location != "":
                             self.coverStore = fileCache(location, None, 1)
-                            
+                    if "urlbasepath" in downloadcover.attrib:
+                        urlbasepath = downloadcover.attrib["urlbasepath"].strip()
+                        if urlbasepath != "":
+                            self.coverStore.setBasepath(urlbasepath)                            
+            
             xmltvfile = config.find("xmltvfile")
             if xmltvfile != None:
                 value = xmltvfile.text.strip()
@@ -484,7 +487,7 @@ class AminoEPGGrabber(object):
             
             # Add icon link, if available
             if channel in self._foundLogos:
-                logoLink = "file://%s" % self._foundLogos[channel]
+                logoLink = self._makeAddress(self._foundLogos[channel])
                 channelIconTag = etree.Element("icon", src = logoLink)
                 channelTag.append(channelIconTag)
                 
@@ -679,7 +682,7 @@ class AminoEPGGrabber(object):
         
         if "icon" in program:
             # Add program icon/cover
-            iconTag = etree.Element("icon", src="file://%s" % program["icon"])
+            iconTag = etree.Element("icon", src=self._makeAddress(program["icon"]))
             programmeTag.append(iconTag)
             
         # Credits (directors, actors, etc)
@@ -800,3 +803,10 @@ class AminoEPGGrabber(object):
             # Could not store logo, set to ignore it
             self._foundLogos[channel] = None
             
+    
+    def _makeAddress(self, source):
+        if os.path.isfile(source):
+            return "file://%s" % source
+        else:
+            return source
+        

@@ -54,6 +54,12 @@
   By default covers for TV programs are not downloaded.
   If you would like the grabber to download the covers and add them
   the the XMLTV file, set this setting to 'TRUE' and specify a path.
+  The location parameter should be the folder where all images shall be stored.
+  The optional urlbasepath parameter is used to construct the xmltv output and should point
+  to the same directory as the location parameter (e.g. http://192.168.0.1/path/to/location/)
+  With tvheadend, the path used in this value will be sent to the clients as well, so if you
+  have external clients, make sure they can access this path as well.
+  urlbasepath requires the trailing slash to be included.
   
   Once a cover is downloaded, it will NOT be refreshed. To refresh the logo, delete the
   existing local copy.
