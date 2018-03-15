@@ -1,17 +1,7 @@
-#!/usr/bin/env python
-
-"""
-A XMLTV compatible EPG grabber for the Amino EPG.
-
-The grabber should function for any provider that supplies IPTV from Glashart Media.
-"""
-from urllib.error import URLError
-
-# Set program version
-VERSION = "v0.6"
-
 from datetime import datetime, date, timedelta
+from lib.fileCache import fileCache
 from lxml import etree
+from urllib.error import URLError
 import pytz
 import http.client
 import http.cookiejar
@@ -22,12 +12,14 @@ import json
 import pickle
 import os
 import time
-import inspect
 import sys
 import urllib.request
 
+# Set module version
+VERSION = "v0.6"     
+
 #===============================================================================
-# The internal data struture used in the AminoEPGGrabber to
+# The internal data struture used in the tv_grab_amino to
 # store the EPG data is as follows:
 # (dict)
 #    epgData
@@ -43,15 +35,15 @@ import urllib.request
 #                categories []
 #===============================================================================
 
-GRABBERDIR = os.path.dirname(os.path.abspath(inspect.getfile(inspect.currentframe())))
-
 class AminoEPGGrabber(object):
     """
-    Class AminoEPGGrabber implements the grabbing and processing
+    Class tv_grab_amino implements the grabbing and processing
     functionality needed for generating an XMLTV guide from the
     supplied location.
     """
-    def __init__(self):
+    def __init__(self, workDir):
+        print("tv_grab_amino module %s loaded on %s." % (VERSION, datetime.now()))
+    
         # Set up defaults
         self.epgServer = "w1.zt6.nl"
         self.api = ""
@@ -60,16 +52,25 @@ class AminoEPGGrabber(object):
         self.details = True
         self.downloadlogo = False
         self.logoStore = None
+        self.downloadcover = False
+        self.coverStore = None
         self.xmltvFile = "aminoepg.xml"
         self.databaseFile = "aminograbber.pkl"
         self.channelDict = {}
         self.genreDict = {}
+        self.version = VERSION
+        self.workDir = workDir
         
         self._timezone = pytz.timezone("Europe/Amsterdam")
         self._epgdata = dict()
         self._xmltv = None
         self._epgConnection = None
         self._foundLogos = dict()
+        
+        # Try to load config file, if it exists
+        configFile = os.path.join(self.workDir, "config.xml")
+        if os.path.isfile(configFile):
+            self.loadConfig(configFile)
         
     #===============================================================================
     # Getters and setters
@@ -95,7 +96,7 @@ class AminoEPGGrabber(object):
             config = configTree.getroot()
             
             if config.tag != "AminoEpgConfig":
-                print("The config.xml file does not appear to be a valid AminoEPGGrabber configuration document.", file=sys.stderr)
+                print("The config.xml file does not appear to be a valid tv_grab_amino configuration document.", file=sys.stderr)
                 sys.exit(1)
                 
             # Try to read each config tag
@@ -142,6 +143,17 @@ class AminoEPGGrabber(object):
                         location = downloadlogo.attrib["location"].strip()
                         if location != "":
                             self.logoStore = location
+                            
+            downloadcover = config.find("downloadcover")
+            if downloadcover != None:
+                value = downloadcover.text.lower()
+                if value == "true": # False is default, so override to false only
+                    self.downloadcover = True
+                    
+                    if "location" in downloadcover.attrib:
+                        location = downloadcover.attrib["location"].strip()
+                        if location != "":
+                            self.coverStore = fileCache(location, None, 1)
                             
             xmltvfile = config.find("xmltvfile")
             if xmltvfile != None:
@@ -200,7 +212,7 @@ class AminoEPGGrabber(object):
         It will overwrite the current in-memory data
         """
         # Only load if file exists
-        databaseFile = os.path.join(GRABBERDIR, self.databaseFile)
+        databaseFile = os.path.join(self.workDir, self.databaseFile)
         if os.path.isfile(databaseFile):
             dbFile = open(databaseFile, "rb")
             self._epgdata = pickle.load(dbFile)
@@ -240,7 +252,7 @@ class AminoEPGGrabber(object):
                     del programs[programId]
         
         # Write dictionary to disk
-        databaseFile = os.path.join(GRABBERDIR, self.databaseFile)
+        databaseFile = os.path.join(self.workDir, self.databaseFile)
         dbFile = open(databaseFile, "wb")
         pickle.dump(self._epgdata, dbFile)
         dbFile.close()
@@ -331,13 +343,14 @@ class AminoEPGGrabber(object):
         goodies = http.cookiejar.CookieJar()
         unknownGenres = {}
         emptyChannels = []
-        director = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=goodies))
+        self._epgConnection = urllib.request.build_opener(urllib.request.HTTPCookieProcessor(cookiejar=goodies))
+        self.coverStore.director = self._epgConnection
         
         try:
             # Login sequence
             req = urllib.request.Request(self.epgServer + "/login.aspx?zs=" + self.mac + "&zs2=" + self.mac, \
                                          headers=headers)
-            resp = director.open(req)
+            resp = self._epgConnection.open(req)
             
             if resp.getcode() == 200:
                 if resp.read().decode("utf-8") == "[0,[1,null]]":
@@ -352,7 +365,7 @@ class AminoEPGGrabber(object):
 
             req = urllib.request.Request(self.epgServer + "/api.aspx?mtd=epg&f_format=cl&cs=13&v=3",
                                          headers=headers)
-            resp = director.open(req).read().decode("utf-8")
+            resp = self._epgConnection.open(req).read().decode("utf-8")
             rawData = json.loads(resp)[1]
             epgData = {}
             startOfDay = datetime.today().replace(hour=4, minute=20)
@@ -369,8 +382,8 @@ class AminoEPGGrabber(object):
                                              "&f=" + start + \
                                              "&t=" + end + \
                                              "&s=" + str(channel["stationid"]) + \
-                                             "&cs=15067", headers=headers)
-                resp = director.open(req).read().decode("utf-8")
+                                             "&cs=73435", headers=headers)
+                resp = self._epgConnection.open(req).read().decode("utf-8")
                 programList = json.loads(resp)[1][str(channel["stationid"])]
                 for grabbedProgram in programList:
                     program = dict()
@@ -390,30 +403,34 @@ class AminoEPGGrabber(object):
                         
                     if "age" in grabbedProgram:
                         if grabbedProgram["age"] == 1:
-                            program["rating"] = "AL"
+                            program["rating"] = "0"
                         else:
-                            program["rating"] = str(grabbedProgram["age"]) + "+"
+                            program["rating"] = str(grabbedProgram["age"])
                         
                     if "genre" in grabbedProgram:
                         program["categories"] = list()
                         for cat in grabbedProgram["genre"]:
                             try:
-                                program["categories"].append(self.genreDict[str(cat)])
+                                if self.genreDict[str(cat)] not in program["categories"]:
+                                    program["categories"].append(self.genreDict[str(cat)])
                             except:
                                 print("Unknown genre ID", cat, "in channel", channel["title"])
                                 print("Adding to unknown genres and looking up possible value...")
                                 idx = grabbedProgram["genre"].index(cat)
-                                req = urllib.request.Request(self.epgServer + "/api.aspx?mtd=epg&f_format=pg&v=2&n=1&f=" + \
-                                      str(grabbedProgram["start"]) + "&t=" + str(grabbedProgram["end"]) + \
-                                      "&s=" + str(channel["stationid"]) + "&cs=512", headers=headers)
-                                resp = director.open(req).read().decode("utf-8")
-                                oldApiPgm = json.loads(resp)[1][str(channel["stationid"])][0]
-                                if "genre" in oldApiPgm and idx < len(oldApiPgm["genre"]):
-                                    unknownGenres[str(cat)] = oldApiPgm["genre"][idx]
+                                if "genres" in grabbedProgram and idx < len(grabbedProgram["genres"]):
+                                    unknownGenres[str(cat)] = grabbedProgram["genres"][idx]
                                     print("Added unknown genre", cat, "=", unknownGenres[str(cat)])
                                 else:
                                     unknownGenres[str(cat)] = "<unknown>"
                     
+                    if "cover" in grabbedProgram:
+                        expires = datetime.utcfromtimestamp(int(grabbedProgram["end"]) / 1000)
+                        coverpath = self.coverStore.getFilePath(grabbedProgram["locId"],
+                                                                expires,
+                                                                self.epgServer + "/" + grabbedProgram["cover"])
+                        if coverpath:
+                            program["icon"] = coverpath 
+                        
                     epgData[channel["title"]][grabbedProgram["locId"]] = program
                 
                 # Remove empty channels
@@ -426,6 +443,7 @@ class AminoEPGGrabber(object):
             print("Error connecting to api:", error)
 
         self._epgdata = epgData
+        self.coverStore.cleanUp()
         
         if len(unknownGenres) != 0:
             print("Possible addition to genres in config.xml:")
@@ -443,14 +461,14 @@ class AminoEPGGrabber(object):
                 
     def writeXmltv(self):
         """
-        This function will write the current in-memory EPG data to an XMLTV file.
+        This function will write the current in-memorys EPG data to an XMLTV file.
         NOTE: Programs not found in the downloaded EPG will not be saved!
         """
         # Set up XML tree and create main <TV> tag
         self._xmltv = etree.Element("tv",
                                     attrib = {"source-info-url"     : self.epgServer,
                                               "source-info-name"    : "Local amino EPG server",
-                                              "generator-info-name" : "AminoEPGGrabber %s (C) 2012 Jeroen Bogers" % VERSION,
+                                              "generator-info-name" : "tv_grab_amino %s (C) 2012 Jeroen Bogers" % VERSION,
                                               "generator-info-url"  : "http://gathering.tweakers.net"}
                                     )
         
@@ -478,8 +496,8 @@ class AminoEPGGrabber(object):
                 self._xmltv.append(self._getProgramAsElement(channel, program))
                 
         # Write XMLTV file to disk
-        xmltvFile = os.path.join(GRABBERDIR, self.xmltvFile)
-        etree.ElementTree(element=self._xmltv).write(xmltvFile)
+        xmltvFile = os.path.join(self.workDir, self.xmltvFile)
+        etree.ElementTree(element=self._xmltv).write(xmltvFile, pretty_print=True)
         
         
     #===============================================================================
@@ -659,6 +677,11 @@ class AminoEPGGrabber(object):
             ratingTag.append(valueTag)
             programmeTag.append(ratingTag)
         
+        if "icon" in program:
+            # Add program icon/cover
+            iconTag = etree.Element("icon", src="file://%s" % program["icon"])
+            programmeTag.append(iconTag)
+            
         # Credits (directors, actors, etc)
         if "credits" in program and len(program["credits"]) > 0:
             # Add credits tag
@@ -684,7 +707,7 @@ class AminoEPGGrabber(object):
         if "categories" in program:
             # Add multiple category tags
             for category in program["categories"]:
-                categoryTag = etree.Element("category", lang = "nl")
+                categoryTag = etree.Element("category", lang = "en_US")
                 categoryTag.text = category
                 programmeTag.append(categoryTag)
                 
@@ -713,9 +736,9 @@ class AminoEPGGrabber(object):
         
         # Prepare paths needed for the logo
         if self.logoStore is not None:
-            localLogoDir = os.path.join(GRABBERDIR, self.logoStore)
+            localLogoDir = os.path.join(self.workDir, self.logoStore)
         else:
-            localLogoDir = os.path.join(GRABBERDIR, "logos")
+            localLogoDir = os.path.join(self.workDir, "logos")
         
         logoName = "%s.png" % channel
         localLogo = os.path.join(localLogoDir, logoName)
@@ -776,38 +799,4 @@ class AminoEPGGrabber(object):
         except EnvironmentError:
             # Could not store logo, set to ignore it
             self._foundLogos[channel] = None
-
-
-def main():
-    """
-    Main entry point of program.
-    This function will read the configuration file and start the grabber.
-    """
-    print("AminoEPGGrabber %s started on %s." % (VERSION, datetime.now()))
-    
-    # Create grabber class
-    grabber = AminoEPGGrabber()
-    
-    # Try to load config file, if it exists
-    configFile = os.path.join(GRABBERDIR, "config.xml")
-    if os.path.isfile(configFile):
-        grabber.loadConfig(configFile)
-    
-
-    # Grab EPG from IPTV network
-    if grabber.api == "solocoo":
-        grabber.grabEpg_solocoo()
-    else:
-        # Solocoo doesn't use the database
-        grabber.loadDatabase()
-        grabber.grabEpg()
-        grabber.writeDatabase()
-    
-    # Write XMLTV file
-    grabber.writeXmltv()
-    
-    print("AminoEPGGrabber finished on %s." % datetime.now())
-
-if __name__ == "__main__":
-    main()
-
+            

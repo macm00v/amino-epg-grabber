@@ -6,25 +6,25 @@
   network, or when you need to use a direct IP address.
   For solocoo servers, the protocol and api base path must be included.
   -->
-  <!--<server></server>-->
+  <server></server>
   
   <!--
   Specify the type of API from which the EPG should be grabbed.
   Old behaviour is still default, but Solocoo is supported as well.
   -->
-  <!--<api>solocoo</api>-->
+  <!-- <api>solocoo</api> -->
   
   <!--
   The Solocoo API will need your Amino's MAC address to log in. 
   -->
-  <!--<mac>00:11:22:33:44:55</mac>-->
+  <!-- <mac>00:11:22:33:44:55</mac> -->
 
   <!--
   By default the grabber will grab 7 days, which is the usual
   maximum of days that are offered.
   For preformance increases, you can enter a smaller number.
   -->
-  <!-- <maxdays>7</maxdays> -->
+  <maxdays>7</maxdays>
   
   <!--
   By default the grabber will grab details about a program, like
@@ -33,7 +33,6 @@
   This retrieval is a lot faster.
   NOTE: If you change this value, delete the database file. If you
   don't, only newly grabbed programs will be affected.
-  Has no effect on solocoo backends as all data is included anyway.
   -->
   <grabdetails>TRUE</grabdetails>
   
@@ -48,9 +47,18 @@
   
   Once a logo is downloaded, it will NOT be refreshed. To refresh the logo, delete the
   existing local copy.
-  TODO: make this work on solocoo servers
   -->
   <downloadlogo>FALSE</downloadlogo>
+
+  <!--
+  By default covers for TV programs are not downloaded.
+  If you would like the grabber to download the covers and add them
+  the the XMLTV file, set this setting to 'TRUE' and specify a path.
+  
+  Once a cover is downloaded, it will NOT be refreshed. To refresh the logo, delete the
+  existing local copy.
+  -->
+  <!-- <downloadcover location="MY_STORAGE_PATH">TRUE</downloadcover> -->
   
   <!--
   You can specify different filenames and locations for the
@@ -300,7 +308,7 @@
     <!-- <channel id="kinkfm">Kink FM</channel> -->
     
 
-	<!-- Solocoo channel list
+	<!-- Solocoo channel list -->
     <channel id="NPO 1">NPO 1</channel>
     <channel id="NPO 2">NPO 2</channel>
     <channel id="NPO 3">NPO 3</channel>
@@ -448,10 +456,10 @@
     <channel id="Radio 5">Radio 5</channel>
     <channel id="Radio 6">Radio 6</channel>
     <channel id="Radio 538">Radio 538</channel>
-    <channel id="Sky Radio 101 FM">Sky Radio 101 FM</channel>
+    <channel id="Sky Radio 101 FM">Sky Radio</channel>
     <channel id="Q-Music">Q-Music</channel>
     <channel id="Radio Veronica">Radio Veronica</channel>
-    <channel id="100NL">100NL</channel>
+    <channel id="100NL">100%NL</channel>
     <channel id="ClassicFM">ClassicFM</channel>
     <channel id="Radio 10 Gold">Radio 10 Gold</channel>
     <channel id="SLAM!FM">SLAM!FM</channel>
@@ -527,7 +535,7 @@
     <channel id="Stingray Operette">Stingray Operette</channel>
     <channel id="Stingray All Day Party NL">Stingray All Day Party NL</channel>
     <channel id="Stingray Piratenhits">Stingray Piratenhits</channel>
-    <channel id="Stingray Classic RnB & Soul">Stingray Classic RnB & Soul</channel>
+    <channel id="Stingray Classic RnB &amp; Soul">Stingray Classic RnB &amp; Soul</channel>
     <channel id="Stingray Reggae">Stingray Reggae</channel>
     <channel id="Stingray Relipop">Stingray Relipop</channel>
     <channel id="Stingray Rock Anthems">Stingray Rock Anthems</channel>
@@ -539,9 +547,10 @@
     <channel id="Stingray Today's pop">Stingray Today's pop</channel>
     <channel id="Stingray Hard House en Trance">Stingray Hard House en Trance</channel>
     <channel id="Stingray Turk">Stingray Turk</channel>
-	-->
   </channellist>
 
+<!-- solocoo mapping of IDs
+-->
   <genres>
     <genre id="1">Non-fictie / Informatie</genre>
     <genre id="2">Nieuws</genre>
@@ -575,6 +584,7 @@
     <genre id="179">Sport Evenement</genre>
     <genre id="183">Media</genre>
     <genre id="191">Sport</genre>
+    <genre id="192">Atletiek</genre>
     <genre id="199">Fietsen / Fiets</genre>
     <genre id="203">Baanfietsen</genre>
     <genre id="204">Teamsporten</genre>
@@ -615,6 +625,7 @@
     <genre id="399">Erotiek</genre>
     <genre id="401">Musical</genre>
     <genre id="402">Klassiek Drama</genre>
+    <genre id="403">Historische drama</genre>
     <genre id="404">Hedendaags Drama</genre>
     <genre id="409">Amusement / Entertainment</genre>
     <genre id="410">Quiz / Wedstrijd</genre>
@@ -643,4 +654,113 @@
     <genre id="680">Reizen / Toerisme</genre>
     <genre id="684">Volwassenen</genre>
   </genres>
+
+
+<!-- tvheadend compatible mapping of IDs
+-->
+<!--
+  <genres>
+    <genre id="1">News Magazine</genre>
+    <genre id="2">News / Current Affairs</genre>
+    <genre id="3">News Magazine</genre>
+    <genre id="5">News / Current Affairs</genre>
+    <genre id="12">Arts Magazines / Culture Magazines</genre>
+    <genre id="19">News Magazine</genre>
+    <genre id="21">News / Weather Report</genre>
+    <genre id="24">News / Current Affairs</genre>
+    <genre id="25">Advertisement / Shopping</genre>
+    <genre id="75">Magazines / Reports / Documentary</genre>
+    <genre id="82">Social / Political Issues / Economics</genre>
+    <genre id="85">Education / Science / Factual Topics</genre>
+    <genre id="105">Arts / Culture (without music)</genre>
+    <genre id="106">Music / Ballet / Dance</genre>
+    <genre id="110">Film / Cinema</genre>
+    <genre id="117">Social / Spiritual Sciences</genre>
+    <genre id="120">Serious / Classical / Religious / Historical Movie / Drama</genre> 
+    <genre id="121">Arts / Culture (without music)</genre>
+    <genre id="122">Adventure / Western / War</genre>
+    <genre id="124">Social / Political Issues / Economics</genre>
+    <genre id="125">Education / Science / Factual Topics</genre>
+    <genre id="127">Technology / Natural Sciences</genre>
+    <genre id="132">Nature / Animals / Environment</genre>
+    <genre id="135">Technology / Natural Sciences</genre>
+    <genre id="140">Medicine / Physiology / Psychology</genre>
+    <genre id="151">Economics / Social Advisory</genre>
+    <genre id="152">Magazines / Reports / Documentary</genre>
+    <genre id="154">Remarkable People</genre>
+    <genre id="167">Special Events (Olympic Games, World Cup, etc.)</genre>
+    <genre id="179">Special Events (Olympic Games, World Cup, etc.)</genre>
+    <genre id="183">New Media</genre>
+    <genre id="191">Sports</genre>
+    <genre id="192">Athletics</genre>
+    <genre id="199">Sports</genre>
+    <genre id="203">Sports</genre> 
+    <genre id="204">Sports</genre>
+    <genre id="212">Team Sports (excluding football)</genre>
+    <genre id="216">Football / Soccer</genre>
+    <genre id="223">Team Sports (excluding football)</genre>
+    <genre id="227">Team Sports (excluding football)</genre>
+    <genre id="235">Tennis / Squash</genre>
+    <genre id="242">Tennis / Squash</genre>
+    <genre id="243">Martial Sports</genre>
+    <genre id="252">Water Sport</genre>
+    <genre id="267">Winter Sports</genre>
+    <genre id="270">Team Sports (excluding football)</genre>
+    <genre id="289">Motor Sport</genre>
+    <genre id="290">Motor Sport</genre>
+    <genre id="292">Motor Sport</genre>
+    <genre id="301">Motor Sport</genre>
+    <genre id="302">Team Sports (excluding football)</genre>
+    <genre id="307">Sports</genre>
+    <genre id="322">Equestrian</genre>
+    <genre id="342">Sports</genre>
+    <genre id="344">Martial Sports</genre>
+    <genre id="360">Sports</genre>
+    <genre id="375">Movie / Drama</genre>
+    <genre id="376">Movie / Drama</genre>
+    <genre id="377">Soap / Melodrama / Folkloric</genre>
+    <genre id="381">Romance</genre>
+    <genre id="384">Adventure / Western / War</genre>
+    <genre id="385">Adventure / Western / War</genre>
+    <genre id="388">Detective / Thriller</genre>
+    <genre id="389">Serious / Classical / Religious / Historical Movie / Drama</genre>
+    <genre id="390">Science Fiction / Fantasy / Horror</genre>
+    <genre id="391">Science Fiction / Fantasy / Horror</genre>
+    <genre id="392">Adventure / Western / War</genre>
+    <genre id="393">Adventure / Western / War</genre>
+    <genre id="394">Detective / Thriller</genre>
+    <genre id="398">Children's / Youth Programs</genre>
+    <genre id="399">Adult Movie / Drama</genre>
+    <genre id="401">Musical / Opera</genre>
+    <genre id="402">Serious / Classical / Religious / Historical Movie / Drama</genre>
+    <genre id="403">Serious / Classical / Religious / Historical Movie / Drama</genre>
+    <genre id="404">Movie / Drama</genre>
+    <genre id="409">Variety Show</genre>
+    <genre id="410">Game Show / Quiz / Contest</genre>
+    <genre id="411">Game Show / Quiz / Contest</genre>
+    <genre id="413">Variety Show</genre>
+    <genre id="417">Variety Show</genre>
+    <genre id="418">Comedy</genre>
+    <genre id="421">Comedy</genre>
+    <genre id="424">Comedy</genre>
+    <genre id="426">Performing Arts</genre>
+    <genre id="427">Social / Sprirtual Sciences</genre>
+    <genre id="431">Music / Ballet / Dance</genre>
+    <genre id="432">Serious Music / Classical Music</genre>
+    <genre id="441">Musical / Opera</genre>
+    <genre id="463">Music / Ballet / Dance</genre>
+    <genre id="573">Rock / Pop</genre>
+    <genre id="575">Music / Ballet / Dance</genre>
+    <genre id="637">Leisure Hobbies</genre>
+    <genre id="638">Advertisement / Shopping</genre>
+    <genre id="639">Motoring</genre>
+    <genre id="646">Cooking</genre>
+    <genre id="649">Handicraft</genre>
+    <genre id="652">Gardening</genre>
+    <genre id="654">Leisure Hobbies</genre>
+    <genre id="670">Motoring</genre>
+    <genre id="680">Tourism / Travel</genre>
+    <genre id="684">Adult Movie / Drama</genre>
+  </genres>
+-->
 </AminoEpgConfig>
